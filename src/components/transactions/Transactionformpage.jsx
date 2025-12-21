@@ -16,7 +16,8 @@ import {
     InputLabel,
     Select,
     OutlinedInput,
-    Chip
+    Chip,
+    useMediaQuery
 } from '@mui/material';
 import {
     ArrowBack,
@@ -35,6 +36,8 @@ import { formatDateForInput } from '../../utils/formatters';
 
 const TransactionFormPage = ({ transaction, onBack, onSubmit, isSubmitting }) => {
     const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+    const isTablet = useMediaQuery(theme.breakpoints.down('md'));
     const isEdit = !!transaction;
 
     const [formData, setFormData] = useState({
@@ -125,7 +128,14 @@ const TransactionFormPage = ({ transaction, onBack, onSubmit, isSubmitting }) =>
     };
 
     return (
-        <Box sx={{ bgcolor: 'background.default', minHeight: '100vh' }}>
+        <Box
+            sx={{
+                bgcolor: 'background.default',
+                minHeight: '100vh',
+                overflowX: 'hidden',
+                width: '100%'
+            }}
+        >
             {/* Header */}
             <Paper
                 elevation={0}
@@ -142,24 +152,51 @@ const TransactionFormPage = ({ transaction, onBack, onSubmit, isSubmitting }) =>
                         direction="row"
                         alignItems="center"
                         justifyContent="space-between"
-                        sx={{ py: 2 }}
+                        sx={{
+                            py: { xs: 1.5, sm: 2 },
+                            gap: 1
+                        }}
                     >
-                        <Stack direction="row" alignItems="center" spacing={2}>
+                        <Stack
+                            direction="row"
+                            alignItems="center"
+                            spacing={{ xs: 1, sm: 2 }}
+                            sx={{ flexGrow: 1, minWidth: 0 }}
+                        >
                             <IconButton
                                 onClick={onBack}
                                 disabled={isSubmitting}
                                 sx={{
                                     bgcolor: alpha(theme.palette.primary.main, 0.1),
+                                    width: { xs: 36, sm: 40 },
+                                    height: { xs: 36, sm: 40 },
+                                    flexShrink: 0,
                                     '&:hover': { bgcolor: alpha(theme.palette.primary.main, 0.2) }
                                 }}
                             >
-                                <ArrowBack />
+                                <ArrowBack sx={{ fontSize: { xs: 20, sm: 24 } }} />
                             </IconButton>
-                            <Box>
-                                <Typography variant="h6" fontWeight={600}>
+                            <Box sx={{ minWidth: 0, flexGrow: 1 }}>
+                                <Typography
+                                    variant="h6"
+                                    fontWeight={600}
+                                    sx={{
+                                        fontSize: { xs: '1rem', sm: '1.25rem' },
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis',
+                                        whiteSpace: 'nowrap'
+                                    }}
+                                >
                                     {isEdit ? 'Editar Transacción' : 'Nueva Transacción'}
                                 </Typography>
-                                <Typography variant="caption" color="text.secondary">
+                                <Typography
+                                    variant="caption"
+                                    color="text.secondary"
+                                    sx={{
+                                        fontSize: { xs: '0.7rem', sm: '0.75rem' },
+                                        display: { xs: 'none', sm: 'block' }
+                                    }}
+                                >
                                     {isEdit ? 'Modifica los campos que necesites' : 'Completa los datos de la transacción'}
                                 </Typography>
                             </Box>
@@ -174,8 +211,10 @@ const TransactionFormPage = ({ transaction, onBack, onSubmit, isSubmitting }) =>
                                 borderRadius: 2,
                                 textTransform: 'none',
                                 fontWeight: 600,
-                                px: 3,
-                                display: { xs: 'none', sm: 'flex' }
+                                px: { xs: 2, sm: 3 },
+                                display: { xs: 'none', sm: 'flex' },
+                                flexShrink: 0,
+                                fontSize: { xs: '0.875rem', sm: '0.9375rem' }
                             }}
                         >
                             {isSubmitting ? 'Guardando...' : 'Guardar'}
@@ -185,35 +224,55 @@ const TransactionFormPage = ({ transaction, onBack, onSubmit, isSubmitting }) =>
             </Paper>
 
             {/* Form Content */}
-            <Container maxWidth="md" sx={{ py: 4 }}>
+            <Container
+                maxWidth="md"
+                sx={{
+                    py: { xs: 2, sm: 3, md: 4 },
+                    px: { xs: 2, sm: 3 }
+                }}
+            >
                 <form onSubmit={handleSubmit}>
-                    <Stack spacing={3}>
+                    <Stack spacing={{ xs: 2, sm: 3 }}>
                         {/* Tipo de transacción */}
                         <Paper
                             elevation={0}
                             sx={{
-                                borderRadius: 3,
+                                borderRadius: { xs: 2, sm: 3 },
                                 border: `1px solid ${theme.palette.divider}`,
-                                p: 3
+                                p: { xs: 2, sm: 2.5, md: 3 }
                             }}
                         >
-                            <Stack direction="row" spacing={1} alignItems="center" mb={2}>
-                                <Category sx={{ fontSize: 20, color: 'text.secondary' }} />
-                                <Typography variant="caption" fontWeight={600} color="text.secondary">
+                            <Stack
+                                direction="row"
+                                spacing={1}
+                                alignItems="center"
+                                mb={{ xs: 1.5, sm: 2 }}
+                            >
+                                <Category sx={{ fontSize: { xs: 18, sm: 20 }, color: 'text.secondary' }} />
+                                <Typography
+                                    variant="caption"
+                                    fontWeight={600}
+                                    color="text.secondary"
+                                    sx={{ fontSize: { xs: '0.7rem', sm: '0.75rem' } }}
+                                >
                                     TIPO DE TRANSACCIÓN
                                 </Typography>
                             </Stack>
 
-                            <Stack direction="row" spacing={2}>
+                            <Stack
+                                direction={{ xs: 'column', sm: 'row' }}
+                                spacing={{ xs: 1.5, sm: 2 }}
+                            >
                                 <Button
                                     fullWidth
                                     variant={formData.tipo === 'ingreso' ? 'contained' : 'outlined'}
                                     onClick={() => handleChange('tipo', 'ingreso')}
                                     sx={{
-                                        py: 2,
+                                        py: { xs: 1.5, sm: 2 },
                                         borderRadius: 2,
                                         textTransform: 'none',
                                         fontWeight: 600,
+                                        fontSize: { xs: '0.875rem', sm: '0.9375rem' },
                                         ...(formData.tipo === 'ingreso' && {
                                             bgcolor: 'success.main',
                                             '&:hover': { bgcolor: 'success.dark' }
@@ -227,10 +286,11 @@ const TransactionFormPage = ({ transaction, onBack, onSubmit, isSubmitting }) =>
                                     variant={formData.tipo === 'gasto' ? 'contained' : 'outlined'}
                                     onClick={() => handleChange('tipo', 'gasto')}
                                     sx={{
-                                        py: 2,
+                                        py: { xs: 1.5, sm: 2 },
                                         borderRadius: 2,
                                         textTransform: 'none',
                                         fontWeight: 600,
+                                        fontSize: { xs: '0.875rem', sm: '0.9375rem' },
                                         ...(formData.tipo === 'gasto' && {
                                             bgcolor: 'error.main',
                                             '&:hover': { bgcolor: 'error.dark' }
@@ -246,19 +306,29 @@ const TransactionFormPage = ({ transaction, onBack, onSubmit, isSubmitting }) =>
                         <Paper
                             elevation={0}
                             sx={{
-                                borderRadius: 3,
+                                borderRadius: { xs: 2, sm: 3 },
                                 border: `1px solid ${theme.palette.divider}`,
-                                p: 3
+                                p: { xs: 2, sm: 2.5, md: 3 }
                             }}
                         >
-                            <Stack direction="row" spacing={1} alignItems="center" mb={3}>
-                                <Description sx={{ fontSize: 20, color: 'text.secondary' }} />
-                                <Typography variant="caption" fontWeight={600} color="text.secondary">
+                            <Stack
+                                direction="row"
+                                spacing={1}
+                                alignItems="center"
+                                mb={{ xs: 2, sm: 3 }}
+                            >
+                                <Description sx={{ fontSize: { xs: 18, sm: 20 }, color: 'text.secondary' }} />
+                                <Typography
+                                    variant="caption"
+                                    fontWeight={600}
+                                    color="text.secondary"
+                                    sx={{ fontSize: { xs: '0.7rem', sm: '0.75rem' } }}
+                                >
                                     INFORMACIÓN BÁSICA
                                 </Typography>
                             </Stack>
 
-                            <Stack spacing={3}>
+                            <Stack spacing={{ xs: 2, sm: 3 }}>
                                 {/* Monto */}
                                 <TextField
                                     fullWidth
@@ -271,7 +341,10 @@ const TransactionFormPage = ({ transaction, onBack, onSubmit, isSubmitting }) =>
                                     InputProps={{
                                         startAdornment: (
                                             <InputAdornment position="start">
-                                                <AccountBalance sx={{ color: 'text.secondary' }} />
+                                                <AccountBalance sx={{
+                                                    color: 'text.secondary',
+                                                    fontSize: { xs: 20, sm: 24 }
+                                                }} />
                                             </InputAdornment>
                                         ),
                                         inputProps: { min: 0, step: '0.01' }
@@ -279,6 +352,10 @@ const TransactionFormPage = ({ transaction, onBack, onSubmit, isSubmitting }) =>
                                     sx={{
                                         '& .MuiOutlinedInput-root': {
                                             borderRadius: 2
+                                        },
+                                        '& .MuiInputBase-input': {
+                                            fontSize: { xs: '0.875rem', sm: '1rem' },
+                                            py: { xs: 1.25, sm: 1.5 }
                                         }
                                     }}
                                 />
@@ -294,13 +371,20 @@ const TransactionFormPage = ({ transaction, onBack, onSubmit, isSubmitting }) =>
                                     InputProps={{
                                         startAdornment: (
                                             <InputAdornment position="start">
-                                                <Description sx={{ color: 'text.secondary' }} />
+                                                <Description sx={{
+                                                    color: 'text.secondary',
+                                                    fontSize: { xs: 20, sm: 24 }
+                                                }} />
                                             </InputAdornment>
                                         )
                                     }}
                                     sx={{
                                         '& .MuiOutlinedInput-root': {
                                             borderRadius: 2
+                                        },
+                                        '& .MuiInputBase-input': {
+                                            fontSize: { xs: '0.875rem', sm: '1rem' },
+                                            py: { xs: 1.25, sm: 1.5 }
                                         }
                                     }}
                                 />
@@ -318,13 +402,20 @@ const TransactionFormPage = ({ transaction, onBack, onSubmit, isSubmitting }) =>
                                     InputProps={{
                                         startAdornment: (
                                             <InputAdornment position="start">
-                                                <CalendarToday sx={{ color: 'text.secondary' }} />
+                                                <CalendarToday sx={{
+                                                    color: 'text.secondary',
+                                                    fontSize: { xs: 20, sm: 24 }
+                                                }} />
                                             </InputAdornment>
                                         )
                                     }}
                                     sx={{
                                         '& .MuiOutlinedInput-root': {
                                             borderRadius: 2
+                                        },
+                                        '& .MuiInputBase-input': {
+                                            fontSize: { xs: '0.875rem', sm: '1rem' },
+                                            py: { xs: 1.25, sm: 1.5 }
                                         }
                                     }}
                                 />
@@ -342,18 +433,29 @@ const TransactionFormPage = ({ transaction, onBack, onSubmit, isSubmitting }) =>
                                         InputProps={{
                                             startAdornment: (
                                                 <InputAdornment position="start">
-                                                    <Category sx={{ color: 'text.secondary' }} />
+                                                    <Category sx={{
+                                                        color: 'text.secondary',
+                                                        fontSize: { xs: 20, sm: 24 }
+                                                    }} />
                                                 </InputAdornment>
                                             )
                                         }}
                                         sx={{
                                             '& .MuiOutlinedInput-root': {
                                                 borderRadius: 2
+                                            },
+                                            '& .MuiInputBase-input': {
+                                                fontSize: { xs: '0.875rem', sm: '1rem' },
+                                                py: { xs: 1.25, sm: 1.5 }
                                             }
                                         }}
                                     >
                                         {TIPO_GASTO.map((option) => (
-                                            <MenuItem key={option.value} value={option.value}>
+                                            <MenuItem
+                                                key={option.value}
+                                                value={option.value}
+                                                sx={{ fontSize: { xs: '0.875rem', sm: '1rem' } }}
+                                            >
                                                 {option.label}
                                             </MenuItem>
                                         ))}
@@ -366,14 +468,24 @@ const TransactionFormPage = ({ transaction, onBack, onSubmit, isSubmitting }) =>
                         <Paper
                             elevation={0}
                             sx={{
-                                borderRadius: 3,
+                                borderRadius: { xs: 2, sm: 3 },
                                 border: `1px solid ${theme.palette.divider}`,
-                                p: 3
+                                p: { xs: 2, sm: 2.5, md: 3 }
                             }}
                         >
-                            <Stack direction="row" spacing={1} alignItems="center" mb={3}>
-                                <Notes sx={{ fontSize: 20, color: 'text.secondary' }} />
-                                <Typography variant="caption" fontWeight={600} color="text.secondary">
+                            <Stack
+                                direction="row"
+                                spacing={1}
+                                alignItems="center"
+                                mb={{ xs: 2, sm: 3 }}
+                            >
+                                <Notes sx={{ fontSize: { xs: 18, sm: 20 }, color: 'text.secondary' }} />
+                                <Typography
+                                    variant="caption"
+                                    fontWeight={600}
+                                    color="text.secondary"
+                                    sx={{ fontSize: { xs: '0.7rem', sm: '0.75rem' } }}
+                                >
                                     OBSERVACIONES (OPCIONAL)
                                 </Typography>
                             </Stack>
@@ -381,7 +493,7 @@ const TransactionFormPage = ({ transaction, onBack, onSubmit, isSubmitting }) =>
                             <TextField
                                 fullWidth
                                 multiline
-                                rows={4}
+                                rows={isMobile ? 3 : 4}
                                 label="Observaciones"
                                 value={formData.observaciones}
                                 onChange={(e) => handleChange('observaciones', e.target.value)}
@@ -389,6 +501,9 @@ const TransactionFormPage = ({ transaction, onBack, onSubmit, isSubmitting }) =>
                                 sx={{
                                     '& .MuiOutlinedInput-root': {
                                         borderRadius: 2
+                                    },
+                                    '& .MuiInputBase-input': {
+                                        fontSize: { xs: '0.875rem', sm: '1rem' }
                                     }
                                 }}
                             />
@@ -398,14 +513,24 @@ const TransactionFormPage = ({ transaction, onBack, onSubmit, isSubmitting }) =>
                         <Paper
                             elevation={0}
                             sx={{
-                                borderRadius: 3,
+                                borderRadius: { xs: 2, sm: 3 },
                                 border: `1px solid ${theme.palette.divider}`,
-                                p: 3
+                                p: { xs: 2, sm: 2.5, md: 3 }
                             }}
                         >
-                            <Stack direction="row" spacing={1} alignItems="center" mb={3}>
-                                <AttachFile sx={{ fontSize: 20, color: 'text.secondary' }} />
-                                <Typography variant="caption" fontWeight={600} color="text.secondary">
+                            <Stack
+                                direction="row"
+                                spacing={1}
+                                alignItems="center"
+                                mb={{ xs: 2, sm: 3 }}
+                            >
+                                <AttachFile sx={{ fontSize: { xs: 18, sm: 20 }, color: 'text.secondary' }} />
+                                <Typography
+                                    variant="caption"
+                                    fontWeight={600}
+                                    color="text.secondary"
+                                    sx={{ fontSize: { xs: '0.7rem', sm: '0.75rem' } }}
+                                >
                                     DOCUMENTO ADJUNTO (OPCIONAL)
                                 </Typography>
                             </Stack>
@@ -414,24 +539,40 @@ const TransactionFormPage = ({ transaction, onBack, onSubmit, isSubmitting }) =>
                                 <Stack
                                     direction="row"
                                     alignItems="center"
-                                    spacing={2}
+                                    spacing={{ xs: 1.5, sm: 2 }}
                                     sx={{
-                                        p: 2,
+                                        p: { xs: 1.5, sm: 2 },
                                         borderRadius: 2,
                                         border: `1px solid ${theme.palette.divider}`,
                                         bgcolor: alpha(theme.palette.primary.main, 0.05)
                                     }}
                                 >
-                                    <AttachFile sx={{ color: 'primary.main' }} />
-                                    <Typography variant="body2" sx={{ flexGrow: 1 }}>
+                                    <AttachFile sx={{
+                                        color: 'primary.main',
+                                        fontSize: { xs: 20, sm: 24 },
+                                        flexShrink: 0
+                                    }} />
+                                    <Typography
+                                        variant="body2"
+                                        sx={{
+                                            flexGrow: 1,
+                                            fontSize: { xs: '0.8rem', sm: '0.875rem' },
+                                            overflow: 'hidden',
+                                            textOverflow: 'ellipsis',
+                                            whiteSpace: 'nowrap'
+                                        }}
+                                    >
                                         {fileName}
                                     </Typography>
                                     <IconButton
                                         size="small"
                                         onClick={removeFile}
-                                        sx={{ color: 'error.main' }}
+                                        sx={{
+                                            color: 'error.main',
+                                            flexShrink: 0
+                                        }}
                                     >
-                                        <Close fontSize="small" />
+                                        <Close sx={{ fontSize: { xs: 18, sm: 20 } }} />
                                     </IconButton>
                                 </Stack>
                             ) : (
@@ -441,11 +582,12 @@ const TransactionFormPage = ({ transaction, onBack, onSubmit, isSubmitting }) =>
                                     component="label"
                                     startIcon={<CloudUpload />}
                                     sx={{
-                                        py: 2,
+                                        py: { xs: 1.5, sm: 2 },
                                         borderRadius: 2,
                                         textTransform: 'none',
                                         fontWeight: 600,
-                                        borderStyle: 'dashed'
+                                        borderStyle: 'dashed',
+                                        fontSize: { xs: '0.875rem', sm: '0.9375rem' }
                                     }}
                                 >
                                     Seleccionar archivo
@@ -458,7 +600,15 @@ const TransactionFormPage = ({ transaction, onBack, onSubmit, isSubmitting }) =>
                                 </Button>
                             )}
 
-                            <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
+                            <Typography
+                                variant="caption"
+                                color="text.secondary"
+                                sx={{
+                                    mt: 1,
+                                    display: 'block',
+                                    fontSize: { xs: '0.7rem', sm: '0.75rem' }
+                                }}
+                            >
                                 Formatos permitidos: PDF, imágenes (JPG, PNG)
                             </Typography>
                         </Paper>
@@ -472,11 +622,12 @@ const TransactionFormPage = ({ transaction, onBack, onSubmit, isSubmitting }) =>
                             onClick={handleSubmit}
                             disabled={isSubmitting}
                             sx={{
-                                py: 2,
+                                py: { xs: 1.5, sm: 2 },
                                 borderRadius: 2,
                                 textTransform: 'none',
                                 fontWeight: 600,
-                                display: { xs: 'flex', sm: 'none' }
+                                display: { xs: 'flex', sm: 'none' },
+                                fontSize: { xs: '0.875rem', sm: '0.9375rem' }
                             }}
                         >
                             {isSubmitting ? 'Guardando...' : 'Guardar Transacción'}

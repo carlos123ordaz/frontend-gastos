@@ -919,33 +919,53 @@ const TransactionList = () => {
                 <Drawer
                     anchor="right"
                     open={filterDrawer}
+
                     onClose={() => setFilterDrawer(false)}
                     PaperProps={{
                         sx: {
+                            pt: 7,
                             width: { xs: '100%', sm: 400 },
                             borderTopLeftRadius: { xs: 0, sm: 24 },
                             borderBottomLeftRadius: { xs: 0, sm: 24 }
                         }
                     }}
                 >
-                    <Box sx={{ p: { xs: 2, sm: 3 }, height: '100%', display: 'flex', flexDirection: 'column' }}>
-                        <Stack direction="row" justifyContent="space-between" alignItems="center" mb={3}>
-                            <Typography variant="h5" fontWeight={700}>
-                                Filtros
-                            </Typography>
-                            <IconButton
-                                onClick={() => setFilterDrawer(false)}
-                                size="small"
-                                sx={{
-                                    bgcolor: alpha(theme.palette.primary.main, 0.1),
-                                    '&:hover': { bgcolor: alpha(theme.palette.primary.main, 0.2) }
-                                }}
-                            >
-                                <Close />
-                            </IconButton>
-                        </Stack>
+                    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                        {/* Header fijo */}
+                        <Box sx={{
+                            p: { xs: 2, sm: 3 },
+                            borderBottom: `1px solid ${theme.palette.divider}`,
+                            flexShrink: 0
+                        }}>
+                            <Stack direction="row" justifyContent="space-between" alignItems="center">
+                                <Typography
+                                    variant="h5"
+                                    fontWeight={700}
+                                    sx={{ fontSize: { xs: '1.25rem', sm: '1.5rem' } }}
+                                >
+                                    Filtros
+                                </Typography>
+                                <IconButton
+                                    onClick={() => setFilterDrawer(false)}
+                                    size="small"
+                                    sx={{
+                                        bgcolor: alpha(theme.palette.primary.main, 0.1),
+                                        width: { xs: 36, sm: 40 },
+                                        height: { xs: 36, sm: 40 },
+                                        '&:hover': { bgcolor: alpha(theme.palette.primary.main, 0.2) }
+                                    }}
+                                >
+                                    <Close sx={{ fontSize: { xs: 20, sm: 24 } }} />
+                                </IconButton>
+                            </Stack>
+                        </Box>
 
-                        <Box sx={{ flexGrow: 1, overflow: 'auto' }}>
+                        {/* Contenido scrolleable */}
+                        <Box sx={{
+                            flexGrow: 1,
+                            overflow: 'auto',
+                            p: { xs: 2, sm: 3 }
+                        }}>
                             <Stack spacing={3}>
                                 {/* Períodos rápidos */}
                                 <Box>
@@ -1157,35 +1177,42 @@ const TransactionList = () => {
                             </Stack>
                         </Box>
 
-                        <Stack spacing={2} sx={{ mt: 3, pt: 2, borderTop: `1px solid ${theme.palette.divider}` }}>
-                            <Button
-                                variant="outlined"
-                                fullWidth
-                                onClick={handleClearFilters}
-                                sx={{
-                                    py: 1.5,
-                                    borderRadius: 2,
-                                    textTransform: 'none',
-                                    fontWeight: 600
-                                }}
-                            >
-                                Limpiar Filtros
-                            </Button>
+                        {/* Botones fijos en la parte inferior */}
+                        <Box sx={{
+                            p: { xs: 2, sm: 3 },
+                            borderTop: `1px solid ${theme.palette.divider}`,
+                            flexShrink: 0
+                        }}>
+                            <Stack spacing={2}>
+                                <Button
+                                    variant="outlined"
+                                    fullWidth
+                                    onClick={handleClearFilters}
+                                    sx={{
+                                        py: 1.5,
+                                        borderRadius: 2,
+                                        textTransform: 'none',
+                                        fontWeight: 600
+                                    }}
+                                >
+                                    Limpiar Filtros
+                                </Button>
 
-                            <Button
-                                variant="contained"
-                                fullWidth
-                                onClick={handleApplyFilters}
-                                sx={{
-                                    py: 1.5,
-                                    borderRadius: 2,
-                                    textTransform: 'none',
-                                    fontWeight: 600
-                                }}
-                            >
-                                Aplicar Filtros
-                            </Button>
-                        </Stack>
+                                <Button
+                                    variant="contained"
+                                    fullWidth
+                                    onClick={handleApplyFilters}
+                                    sx={{
+                                        py: 1.5,
+                                        borderRadius: 2,
+                                        textTransform: 'none',
+                                        fontWeight: 600
+                                    }}
+                                >
+                                    Aplicar Filtros
+                                </Button>
+                            </Stack>
+                        </Box>
                     </Box>
                 </Drawer>
 

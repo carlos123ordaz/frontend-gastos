@@ -12,7 +12,8 @@ import {
     useTheme,
     Paper,
     Tooltip,
-    Badge
+    Badge,
+    useMediaQuery
 } from '@mui/material';
 import {
     PersonAdd,
@@ -34,6 +35,8 @@ import { formatDateTime } from '../../utils/formatters';
 
 const UserList = () => {
     const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+    const isTablet = useMediaQuery(theme.breakpoints.down('md'));
     const { enqueueSnackbar } = useSnackbar();
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -103,19 +106,33 @@ const UserList = () => {
     if (loading) return <Loading />;
 
     return (
-        <Box sx={{ bgcolor: 'background.default', minHeight: '100vh', pb: 10 }}>
-            <Container maxWidth="lg" sx={{ py: 4 }}>
+        <Box
+            sx={{
+                bgcolor: 'background.default',
+                minHeight: '100vh',
+                pb: 10,
+                overflowX: 'hidden',
+                width: '100%'
+            }}
+        >
+            <Container
+                maxWidth="lg"
+                sx={{
+                    py: { xs: 2, sm: 3, md: 4 },
+                    px: { xs: 2, sm: 3 }
+                }}
+            >
                 {/* Header mejorado */}
-                <Box sx={{ mb: 4 }}>
+                <Box sx={{ mb: { xs: 3, sm: 4 } }}>
                     <Stack
                         direction={{ xs: 'column', sm: 'row' }}
                         justifyContent="space-between"
                         alignItems={{ xs: 'flex-start', sm: 'center' }}
                         spacing={2}
                     >
-                        <Box>
+                        <Box sx={{ width: { xs: '100%', sm: 'auto' } }}>
                             <Typography
-                                variant="h4"
+                                variant={isMobile ? 'h5' : 'h4'}
                                 fontWeight={700}
                                 sx={{
                                     background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
@@ -125,11 +142,21 @@ const UserList = () => {
                                     mb: 1
                                 }}
                             >
-                                Gestión de Usuarios
+                                {isMobile ? 'Usuarios' : 'Gestión de Usuarios'}
                             </Typography>
-                            <Stack direction="row" spacing={2} flexWrap="wrap">
-                                <Typography variant="body2" color="text.secondary">
-                                    {users.length} usuarios registrados
+                            <Stack
+                                direction="row"
+                                spacing={{ xs: 1, sm: 2 }}
+                                flexWrap="wrap"
+                                gap={{ xs: 0.5, sm: 0 }}
+                                alignItems="center"
+                            >
+                                <Typography
+                                    variant="body2"
+                                    color="text.secondary"
+                                    sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
+                                >
+                                    {users.length} {isMobile ? '' : 'usuarios'}
                                 </Typography>
                                 <Box
                                     sx={{
@@ -137,10 +164,15 @@ const UserList = () => {
                                         height: 3,
                                         borderRadius: '50%',
                                         bgcolor: 'text.secondary',
-                                        alignSelf: 'center'
+                                        display: { xs: 'none', sm: 'block' }
                                     }}
                                 />
-                                <Typography variant="body2" color="success.main" fontWeight={600}>
+                                <Typography
+                                    variant="body2"
+                                    color="success.main"
+                                    fontWeight={600}
+                                    sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
+                                >
                                     {activeUsers} activos
                                 </Typography>
                                 <Box
@@ -149,20 +181,24 @@ const UserList = () => {
                                         height: 3,
                                         borderRadius: '50%',
                                         bgcolor: 'text.secondary',
-                                        alignSelf: 'center'
+                                        display: { xs: 'none', sm: 'block' }
                                     }}
                                 />
-                                <Typography variant="body2" color="primary.main" fontWeight={600}>
-                                    {adminUsers} administradores
+                                <Typography
+                                    variant="body2"
+                                    color="primary.main"
+                                    fontWeight={600}
+                                    sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
+                                >
+                                    {adminUsers} admin{isMobile ? '' : 'istradores'}
                                 </Typography>
                             </Stack>
                         </Box>
                     </Stack>
                 </Box>
 
-
                 {/* Users List mejorado */}
-                <Stack spacing={2}>
+                <Stack spacing={{ xs: 1.5, sm: 2 }}>
                     {users.length > 0 ? (
                         users.map((user) => {
                             const isAdmin = user.role === 'admin';
@@ -173,7 +209,7 @@ const UserList = () => {
                                     key={user._id}
                                     elevation={0}
                                     sx={{
-                                        borderRadius: 3,
+                                        borderRadius: { xs: 2, sm: 3 },
                                         border: `1px solid ${theme.palette.divider}`,
                                         overflow: 'hidden',
                                         transition: 'all 0.2s',
@@ -184,24 +220,42 @@ const UserList = () => {
                                         }
                                     }}
                                 >
-                                    <Box sx={{ p: 3 }}>
-                                        <Stack direction="row" spacing={2} alignItems="flex-start">
-                                            {/* Avatar mejorado */}
-
-
+                                    <Box sx={{ p: { xs: 2, sm: 2.5, md: 3 } }}>
+                                        <Stack
+                                            direction="row"
+                                            spacing={{ xs: 1.5, sm: 2 }}
+                                            alignItems="flex-start"
+                                        >
                                             {/* Content */}
-                                            <Box sx={{ flexGrow: 1, minWidth: 0 }}>
-                                                <Stack direction="row" alignItems="center" spacing={1} mb={0.5} flexWrap="wrap">
-                                                    <Typography variant="h6" fontWeight={600}>
+                                            <Box sx={{ flexGrow: 1, minWidth: 0, overflow: 'hidden' }}>
+                                                <Stack
+                                                    direction="row"
+                                                    alignItems="center"
+                                                    spacing={1}
+                                                    mb={0.5}
+                                                    flexWrap="wrap"
+                                                    gap={0.5}
+                                                >
+                                                    <Typography
+                                                        variant="h6"
+                                                        fontWeight={600}
+                                                        sx={{
+                                                            fontSize: { xs: '1rem', sm: '1.15rem', md: '1.25rem' },
+                                                            overflow: 'hidden',
+                                                            textOverflow: 'ellipsis',
+                                                            whiteSpace: 'nowrap',
+                                                            maxWidth: { xs: '150px', sm: '100%' }
+                                                        }}
+                                                    >
                                                         {user.nombre}
                                                     </Typography>
                                                     <Chip
-                                                        icon={isAdmin ? <AdminPanelSettings sx={{ fontSize: 16 }} /> : <Person sx={{ fontSize: 16 }} />}
-                                                        label={isAdmin ? 'Administrador' : 'Usuario'}
+                                                        icon={isAdmin ? <AdminPanelSettings sx={{ fontSize: { xs: 14, sm: 16 } }} /> : <Person sx={{ fontSize: { xs: 14, sm: 16 } }} />}
+                                                        label={isAdmin ? (isMobile ? 'Admin' : 'Administrador') : 'Usuario'}
                                                         size="small"
                                                         sx={{
-                                                            height: 24,
-                                                            fontSize: '0.75rem',
+                                                            height: { xs: 22, sm: 24 },
+                                                            fontSize: { xs: '0.7rem', sm: '0.75rem' },
                                                             fontWeight: 600,
                                                             borderRadius: 1.5,
                                                             bgcolor: isAdmin
@@ -212,39 +266,67 @@ const UserList = () => {
                                                     />
                                                 </Stack>
 
-                                                <Stack direction="row" spacing={2} alignItems="center" mb={2} flexWrap="wrap">
+                                                <Stack
+                                                    direction={{ xs: 'column', sm: 'row' }}
+                                                    spacing={{ xs: 0.5, sm: 2 }}
+                                                    alignItems={{ xs: 'flex-start', sm: 'center' }}
+                                                    mb={2}
+                                                    flexWrap="wrap"
+                                                >
                                                     <Stack direction="row" spacing={0.5} alignItems="center">
-                                                        <Email sx={{ fontSize: 16, color: 'text.secondary' }} />
-                                                        <Typography variant="body2" color="text.secondary">
+                                                        <Email sx={{ fontSize: { xs: 14, sm: 16 }, color: 'text.secondary' }} />
+                                                        <Typography
+                                                            variant="body2"
+                                                            color="text.secondary"
+                                                            sx={{
+                                                                fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                                                                overflow: 'hidden',
+                                                                textOverflow: 'ellipsis',
+                                                                whiteSpace: 'nowrap',
+                                                                maxWidth: { xs: '200px', sm: '100%' }
+                                                            }}
+                                                        >
                                                             {user.email}
                                                         </Typography>
                                                     </Stack>
-                                                    <Box
-                                                        sx={{
-                                                            width: 3,
-                                                            height: 3,
-                                                            borderRadius: '50%',
-                                                            bgcolor: 'text.secondary'
-                                                        }}
-                                                    />
-                                                    <Stack direction="row" spacing={0.5} alignItems="center">
-                                                        <CalendarToday sx={{ fontSize: 16, color: 'text.secondary' }} />
-                                                        <Typography variant="caption" color="text.secondary">
-                                                            Registrado: {formatDateTime(user.createdAt)}
-                                                        </Typography>
-                                                    </Stack>
+                                                    {!isMobile && (
+                                                        <>
+                                                            <Box
+                                                                sx={{
+                                                                    width: 3,
+                                                                    height: 3,
+                                                                    borderRadius: '50%',
+                                                                    bgcolor: 'text.secondary',
+                                                                    display: { xs: 'none', sm: 'block' }
+                                                                }}
+                                                            />
+                                                            <Stack direction="row" spacing={0.5} alignItems="center">
+                                                                <CalendarToday sx={{ fontSize: 16, color: 'text.secondary' }} />
+                                                                <Typography variant="caption" color="text.secondary">
+                                                                    Registrado: {formatDateTime(user.createdAt)}
+                                                                </Typography>
+                                                            </Stack>
+                                                        </>
+                                                    )}
                                                 </Stack>
 
                                                 {/* Status y Actions */}
-                                                <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
+                                                <Stack
+                                                    direction="row"
+                                                    spacing={1}
+                                                    alignItems="center"
+                                                    flexWrap="wrap"
+                                                    gap={1}
+                                                >
                                                     <Chip
-                                                        icon={isActive ? <VerifiedUser sx={{ fontSize: 16 }} /> : <Block sx={{ fontSize: 16 }} />}
+                                                        icon={isActive ? <VerifiedUser sx={{ fontSize: { xs: 14, sm: 16 } }} /> : <Block sx={{ fontSize: { xs: 14, sm: 16 } }} />}
                                                         label={isActive ? 'Activo' : 'Inactivo'}
                                                         size="small"
                                                         sx={{
-                                                            height: 28,
+                                                            height: { xs: 26, sm: 28 },
                                                             fontWeight: 600,
                                                             borderRadius: 1.5,
+                                                            fontSize: { xs: '0.7rem', sm: '0.75rem' },
                                                             bgcolor: isActive
                                                                 ? alpha(theme.palette.success.main, 0.1)
                                                                 : alpha(theme.palette.error.main, 0.1),
@@ -263,12 +345,14 @@ const UserList = () => {
                                                                 sx={{
                                                                     bgcolor: alpha(theme.palette.primary.main, 0.1),
                                                                     color: 'primary.main',
+                                                                    width: { xs: 32, sm: 36 },
+                                                                    height: { xs: 32, sm: 36 },
                                                                     '&:hover': {
                                                                         bgcolor: alpha(theme.palette.primary.main, 0.2),
                                                                     }
                                                                 }}
                                                             >
-                                                                <Edit fontSize="small" />
+                                                                <Edit sx={{ fontSize: { xs: 18, sm: 20 } }} />
                                                             </IconButton>
                                                         </Tooltip>
                                                         <Tooltip title="Eliminar usuario">
@@ -278,12 +362,14 @@ const UserList = () => {
                                                                 sx={{
                                                                     bgcolor: alpha(theme.palette.error.main, 0.1),
                                                                     color: 'error.main',
+                                                                    width: { xs: 32, sm: 36 },
+                                                                    height: { xs: 32, sm: 36 },
                                                                     '&:hover': {
                                                                         bgcolor: alpha(theme.palette.error.main, 0.2),
                                                                     }
                                                                 }}
                                                             >
-                                                                <Delete fontSize="small" />
+                                                                <Delete sx={{ fontSize: { xs: 18, sm: 20 } }} />
                                                             </IconButton>
                                                         </Tooltip>
                                                     </Stack>
@@ -298,31 +384,40 @@ const UserList = () => {
                         <Paper
                             elevation={0}
                             sx={{
-                                borderRadius: 3,
+                                borderRadius: { xs: 2, sm: 3 },
                                 border: `1px solid ${theme.palette.divider}`,
-                                py: 10
+                                py: { xs: 6, sm: 8, md: 10 }
                             }}
                         >
-                            <Box sx={{ textAlign: 'center' }}>
+                            <Box sx={{ textAlign: 'center', px: 2 }}>
                                 <Box
                                     sx={{
-                                        width: 80,
-                                        height: 80,
+                                        width: { xs: 60, sm: 80 },
+                                        height: { xs: 60, sm: 80 },
                                         borderRadius: '50%',
                                         bgcolor: alpha(theme.palette.primary.main, 0.1),
                                         display: 'flex',
                                         alignItems: 'center',
                                         justifyContent: 'center',
                                         mx: 'auto',
-                                        mb: 3
+                                        mb: { xs: 2, sm: 3 }
                                     }}
                                 >
-                                    <Person sx={{ fontSize: 40, color: 'primary.main' }} />
+                                    <Person sx={{ fontSize: { xs: 30, sm: 40 }, color: 'primary.main' }} />
                                 </Box>
-                                <Typography variant="h6" fontWeight={600} gutterBottom>
+                                <Typography
+                                    variant="h6"
+                                    fontWeight={600}
+                                    gutterBottom
+                                    sx={{ fontSize: { xs: '1rem', sm: '1.25rem' } }}
+                                >
                                     No hay usuarios registrados
                                 </Typography>
-                                <Typography variant="body2" color="text.secondary">
+                                <Typography
+                                    variant="body2"
+                                    color="text.secondary"
+                                    sx={{ fontSize: { xs: '0.875rem', sm: '0.875rem' } }}
+                                >
                                     Agrega el primer usuario para comenzar
                                 </Typography>
                             </Box>
