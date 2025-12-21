@@ -78,6 +78,7 @@ const categoryIcons = {
 const TransactionList = () => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+    const isSmallMobile = useMediaQuery(theme.breakpoints.down('sm'));
     const { isAdmin } = useAuth();
     const { enqueueSnackbar } = useSnackbar();
 
@@ -304,7 +305,7 @@ const TransactionList = () => {
         if (selectedPreset === FILTER_PRESETS.LAST_30_DAYS) return 'Últimos 30 días';
         if (selectedPreset === FILTER_PRESETS.THIS_WEEK) return 'Esta semana';
         if (selectedPreset === FILTER_PRESETS.CUSTOM && appliedFilters.fechaInicio && appliedFilters.fechaFin) {
-            return `${format(new Date(appliedFilters.fechaInicio), 'dd/MM/yyyy')} - ${format(new Date(appliedFilters.fechaFin), 'dd/MM/yyyy')}`;
+            return isSmallMobile ? 'Personalizado' : `${format(new Date(appliedFilters.fechaInicio), 'dd/MM/yy')} - ${format(new Date(appliedFilters.fechaFin), 'dd/MM/yy')}`;
         }
         return 'Filtros';
     };
@@ -357,10 +358,22 @@ const TransactionList = () => {
     if (loading && transactions.length === 0) return <Loading />;
 
     return (
-        <Box sx={{ bgcolor: 'background.default', minHeight: '100vh', pb: 10 }}>
-            <Container sx={{ py: 4 }}>
+        <Box sx={{
+            bgcolor: 'background.default',
+            minHeight: '100vh',
+            pb: 10,
+            overflowX: 'hidden',
+            width: '100%'
+        }}>
+            <Container
+                maxWidth="lg"
+                sx={{
+                    py: { xs: 2, sm: 3, md: 4 },
+                    px: { xs: 2, sm: 3 }
+                }}
+            >
                 {/* Header mejorado */}
-                <Box sx={{ mb: 4 }}>
+                <Box sx={{ mb: { xs: 2, sm: 3, md: 4 } }}>
                     <Stack
                         direction={{ xs: 'column', sm: 'row' }}
                         justifyContent="space-between"
@@ -368,9 +381,9 @@ const TransactionList = () => {
                         spacing={2}
                         mb={2}
                     >
-                        <Box>
+                        <Box sx={{ width: { xs: '100%', sm: 'auto' } }}>
                             <Typography
-                                variant="h4"
+                                variant={isSmallMobile ? 'h5' : 'h4'}
                                 fontWeight={700}
                                 sx={{
                                     background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
@@ -382,21 +395,36 @@ const TransactionList = () => {
                             >
                                 Transacciones
                             </Typography>
-                            <Typography variant="body2" color="text.secondary">
-                                {totalCount} transacciones totales • Mostrando {filteredTransactions.length} en esta página
+                            <Typography
+                                variant="body2"
+                                color="text.secondary"
+                                sx={{
+                                    fontSize: { xs: '0.75rem', sm: '0.875rem' }
+                                }}
+                            >
+                                {totalCount} totales • {filteredTransactions.length} en página
                             </Typography>
                         </Box>
 
-                        <Stack direction="row" spacing={1.5}>
+                        <Stack
+                            direction="row"
+                            spacing={1}
+                            sx={{
+                                width: { xs: '100%', sm: 'auto' }
+                            }}
+                        >
                             <Button
                                 variant="outlined"
-                                startIcon={<FilterList />}
+                                startIcon={!isSmallMobile && <FilterList />}
                                 onClick={() => setFilterDrawer(true)}
                                 sx={{
                                     borderRadius: 2,
                                     textTransform: 'none',
                                     fontWeight: 600,
-                                    minWidth: 140
+                                    flex: { xs: 1, sm: 'unset' },
+                                    minWidth: { xs: 'auto', sm: 140 },
+                                    px: { xs: 2, sm: 3 },
+                                    fontSize: { xs: '0.875rem', sm: '0.9375rem' }
                                 }}
                             >
                                 {getFilterLabel()}
@@ -500,26 +528,35 @@ const TransactionList = () => {
                 <Paper
                     elevation={0}
                     sx={{
-                        mb: 3,
-                        borderRadius: 3,
+                        mb: { xs: 2, sm: 3 },
+                        borderRadius: { xs: 2, sm: 3 },
                         border: `1px solid ${theme.palette.divider}`,
                         overflow: 'hidden'
                     }}
                 >
                     <TextField
                         fullWidth
-                        placeholder="Buscar por descripción u observaciones..."
+                        placeholder={isSmallMobile ? "Buscar..." : "Buscar por descripción u observaciones..."}
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         InputProps={{
                             startAdornment: (
-                                <Search sx={{ mr: 1.5, ml: 0.5, color: 'text.secondary', fontSize: 22 }} />
+                                <Search sx={{
+                                    mr: { xs: 1, sm: 1.5 },
+                                    ml: 0.5,
+                                    color: 'text.secondary',
+                                    fontSize: { xs: 20, sm: 22 }
+                                }} />
                             ),
                         }}
                         sx={{
                             '& .MuiOutlinedInput-root': {
                                 '& fieldset': { border: 'none' },
                             },
+                            '& .MuiInputBase-input': {
+                                fontSize: { xs: '0.875rem', sm: '1rem' },
+                                py: { xs: 1.5, sm: 2 }
+                            }
                         }}
                     />
                 </Paper>
@@ -529,15 +566,31 @@ const TransactionList = () => {
                     <Paper
                         elevation={0}
                         sx={{
-                            p: 2,
-                            mb: 3,
-                            borderRadius: 3,
+                            p: { xs: 1.5, sm: 2 },
+                            mb: { xs: 2, sm: 3 },
+                            borderRadius: { xs: 2, sm: 3 },
                             border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`,
                             bgcolor: alpha(theme.palette.primary.main, 0.02)
                         }}
                     >
-                        <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap" gap={1}>
-                            <Typography variant="caption" fontWeight={600} color="text.secondary" sx={{ mr: 1 }}>
+                        <Stack
+                            direction="row"
+                            spacing={1}
+                            alignItems="center"
+                            flexWrap="wrap"
+                            gap={1}
+                            sx={{ width: '100%' }}
+                        >
+                            <Typography
+                                variant="caption"
+                                fontWeight={600}
+                                color="text.secondary"
+                                sx={{
+                                    mr: { xs: 0, sm: 1 },
+                                    width: { xs: '100%', sm: 'auto' },
+                                    fontSize: { xs: '0.65rem', sm: '0.75rem' }
+                                }}
+                            >
                                 FILTROS ACTIVOS:
                             </Typography>
                             {appliedFilters.tipo && (
@@ -548,23 +601,29 @@ const TransactionList = () => {
                                         setTempFilters(prev => ({ ...prev, tipo: '' }));
                                     }}
                                     size="small"
-                                    sx={{ borderRadius: 1.5 }}
+                                    sx={{
+                                        borderRadius: 1.5,
+                                        fontSize: { xs: '0.7rem', sm: '0.75rem' }
+                                    }}
                                 />
                             )}
                             {appliedFilters.tipoGasto && (
                                 <Chip
-                                    label={`Categoría: ${appliedFilters.tipoGasto}`}
+                                    label={isSmallMobile ? appliedFilters.tipoGasto : `Categoría: ${appliedFilters.tipoGasto}`}
                                     onDelete={() => {
                                         setAppliedFilters(prev => ({ ...prev, tipoGasto: '' }));
                                         setTempFilters(prev => ({ ...prev, tipoGasto: '' }));
                                     }}
                                     size="small"
-                                    sx={{ borderRadius: 1.5 }}
+                                    sx={{
+                                        borderRadius: 1.5,
+                                        fontSize: { xs: '0.7rem', sm: '0.75rem' }
+                                    }}
                                 />
                             )}
                             {selectedPreset === FILTER_PRESETS.CUSTOM && (appliedFilters.fechaInicio || appliedFilters.fechaFin) && (
                                 <Chip
-                                    icon={<CalendarToday sx={{ fontSize: 16 }} />}
+                                    icon={<CalendarToday sx={{ fontSize: { xs: 14, sm: 16 } }} />}
                                     label="Rango personalizado"
                                     onDelete={() => {
                                         setAppliedFilters(prev => ({ ...prev, fechaInicio: '', fechaFin: '' }));
@@ -572,17 +631,22 @@ const TransactionList = () => {
                                         setSelectedPreset(FILTER_PRESETS.ALL);
                                     }}
                                     size="small"
-                                    sx={{ borderRadius: 1.5 }}
+                                    sx={{
+                                        borderRadius: 1.5,
+                                        fontSize: { xs: '0.7rem', sm: '0.75rem' }
+                                    }}
                                 />
                             )}
                             <Button
                                 size="small"
                                 onClick={handleClearFilters}
                                 sx={{
-                                    ml: 'auto',
+                                    ml: { xs: 0, sm: 'auto' },
                                     textTransform: 'none',
                                     fontWeight: 600,
-                                    fontSize: '0.75rem'
+                                    fontSize: { xs: '0.7rem', sm: '0.75rem' },
+                                    width: { xs: '100%', sm: 'auto' },
+                                    mt: { xs: 1, sm: 0 }
                                 }}
                             >
                                 Limpiar todo
@@ -592,7 +656,7 @@ const TransactionList = () => {
                 )}
 
                 {/* Transactions List mejorado */}
-                <Stack spacing={2}>
+                <Stack spacing={{ xs: 1.5, sm: 2 }}>
                     {filteredTransactions.length > 0 ? (
                         filteredTransactions.map((transaction) => {
                             const Icon = transaction.tipo === 'ingreso'
@@ -605,7 +669,7 @@ const TransactionList = () => {
                                     key={transaction._id}
                                     elevation={0}
                                     sx={{
-                                        borderRadius: 3,
+                                        borderRadius: { xs: 2, sm: 3 },
                                         border: `1px solid ${theme.palette.divider}`,
                                         overflow: 'hidden',
                                         transition: 'all 0.2s',
@@ -618,13 +682,17 @@ const TransactionList = () => {
                                     }}
                                     onClick={() => handleViewDetail(transaction)}
                                 >
-                                    <Box sx={{ p: 2.5 }}>
-                                        <Stack direction="row" spacing={2} alignItems="center">
+                                    <Box sx={{ p: { xs: 1.5, sm: 2, md: 2.5 } }}>
+                                        <Stack
+                                            direction="row"
+                                            spacing={{ xs: 1.5, sm: 2 }}
+                                            alignItems="center"
+                                        >
                                             {/* Icon mejorado */}
                                             <Avatar
                                                 sx={{
-                                                    width: 52,
-                                                    height: 52,
+                                                    width: { xs: 44, sm: 52 },
+                                                    height: { xs: 44, sm: 52 },
                                                     bgcolor: alpha(
                                                         isIncome ? theme.palette.success.main : theme.palette.error.main,
                                                         0.12
@@ -637,32 +705,43 @@ const TransactionList = () => {
                                             >
                                                 <Icon
                                                     sx={{
-                                                        fontSize: 26,
+                                                        fontSize: { xs: 22, sm: 26 },
                                                         color: isIncome ? 'success.main' : 'error.main'
                                                     }}
                                                 />
                                             </Avatar>
 
                                             {/* Content */}
-                                            <Box sx={{ flexGrow: 1, minWidth: 0 }}>
+                                            <Box sx={{ flexGrow: 1, minWidth: 0, overflow: 'hidden' }}>
                                                 <Typography
                                                     variant="h6"
                                                     fontWeight={600}
-                                                    sx={{ mb: 0.5, fontSize: '1.05rem' }}
-                                                    noWrap
+                                                    sx={{
+                                                        mb: 0.5,
+                                                        fontSize: { xs: '0.95rem', sm: '1.05rem' },
+                                                        overflow: 'hidden',
+                                                        textOverflow: 'ellipsis',
+                                                        whiteSpace: 'nowrap'
+                                                    }}
                                                 >
                                                     {transaction.descripcion}
                                                 </Typography>
 
                                                 <Stack
                                                     direction="row"
-                                                    spacing={1.5}
+                                                    spacing={{ xs: 1, sm: 1.5 }}
                                                     alignItems="center"
                                                     flexWrap="wrap"
+                                                    sx={{ gap: 0.5 }}
                                                 >
                                                     <Stack direction="row" alignItems="center" spacing={0.5}>
-                                                        <CalendarToday sx={{ fontSize: 14, color: 'text.secondary' }} />
-                                                        <Typography variant="caption" color="text.secondary" fontWeight={500}>
+                                                        <CalendarToday sx={{ fontSize: { xs: 12, sm: 14 }, color: 'text.secondary' }} />
+                                                        <Typography
+                                                            variant="caption"
+                                                            color="text.secondary"
+                                                            fontWeight={500}
+                                                            sx={{ fontSize: { xs: '0.7rem', sm: '0.75rem' } }}
+                                                        >
                                                             {formatDate(transaction.fecha)}
                                                         </Typography>
                                                     </Stack>
@@ -672,8 +751,8 @@ const TransactionList = () => {
                                                             label={transaction.tipoGasto}
                                                             size="small"
                                                             sx={{
-                                                                height: 22,
-                                                                fontSize: '0.7rem',
+                                                                height: { xs: 20, sm: 22 },
+                                                                fontSize: { xs: '0.65rem', sm: '0.7rem' },
                                                                 textTransform: 'capitalize',
                                                                 fontWeight: 600,
                                                                 borderRadius: 1.5,
@@ -685,12 +764,12 @@ const TransactionList = () => {
 
                                                     {transaction.documento?.url && (
                                                         <Chip
-                                                            icon={<AttachFile sx={{ fontSize: 14 }} />}
+                                                            icon={<AttachFile sx={{ fontSize: { xs: 12, sm: 14 } }} />}
                                                             label="Adjunto"
                                                             size="small"
                                                             sx={{
-                                                                height: 22,
-                                                                fontSize: '0.7rem',
+                                                                height: { xs: 20, sm: 22 },
+                                                                fontSize: { xs: '0.65rem', sm: '0.7rem' },
                                                                 fontWeight: 600,
                                                                 borderRadius: 1.5,
                                                                 bgcolor: alpha(theme.palette.info.main, 0.1),
@@ -702,18 +781,29 @@ const TransactionList = () => {
                                             </Box>
 
                                             {/* Amount */}
-                                            <Stack direction="row" spacing={1} alignItems="center">
+                                            <Stack
+                                                direction="row"
+                                                spacing={{ xs: 0.5, sm: 1 }}
+                                                alignItems="center"
+                                                sx={{ flexShrink: 0 }}
+                                            >
                                                 <Typography
                                                     variant="h5"
                                                     fontWeight={700}
                                                     sx={{
                                                         color: isIncome ? 'success.main' : 'error.main',
-                                                        fontVariantNumeric: 'tabular-nums'
+                                                        fontVariantNumeric: 'tabular-nums',
+                                                        fontSize: { xs: '1rem', sm: '1.25rem' }
                                                     }}
                                                 >
                                                     {isIncome ? '+' : '-'} {formatCurrency(transaction.monto)}
                                                 </Typography>
-                                                <ChevronRight sx={{ color: 'text.secondary' }} />
+                                                <ChevronRight
+                                                    sx={{
+                                                        color: 'text.secondary',
+                                                        display: { xs: 'none', sm: 'block' }
+                                                    }}
+                                                />
                                             </Stack>
                                         </Stack>
                                     </Box>
@@ -724,31 +814,43 @@ const TransactionList = () => {
                         <Paper
                             elevation={0}
                             sx={{
-                                borderRadius: 3,
+                                borderRadius: { xs: 2, sm: 3 },
                                 border: `1px solid ${theme.palette.divider}`,
-                                py: 10
+                                py: { xs: 6, sm: 8, md: 10 }
                             }}
                         >
-                            <Box sx={{ textAlign: 'center' }}>
+                            <Box sx={{ textAlign: 'center', px: 2 }}>
                                 <Box
                                     sx={{
-                                        width: 80,
-                                        height: 80,
+                                        width: { xs: 60, sm: 80 },
+                                        height: { xs: 60, sm: 80 },
                                         borderRadius: '50%',
                                         bgcolor: alpha(theme.palette.primary.main, 0.1),
                                         display: 'flex',
                                         alignItems: 'center',
                                         justifyContent: 'center',
                                         mx: 'auto',
-                                        mb: 3
+                                        mb: { xs: 2, sm: 3 }
                                     }}
                                 >
-                                    <Receipt sx={{ fontSize: 40, color: 'primary.main' }} />
+                                    <Receipt sx={{ fontSize: { xs: 30, sm: 40 }, color: 'primary.main' }} />
                                 </Box>
-                                <Typography variant="h6" fontWeight={600} gutterBottom>
+                                <Typography
+                                    variant="h6"
+                                    fontWeight={600}
+                                    gutterBottom
+                                    sx={{ fontSize: { xs: '1rem', sm: '1.25rem' } }}
+                                >
                                     No hay transacciones
                                 </Typography>
-                                <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                                <Typography
+                                    variant="body2"
+                                    color="text.secondary"
+                                    sx={{
+                                        mb: { xs: 2, sm: 3 },
+                                        fontSize: { xs: '0.875rem', sm: '0.875rem' }
+                                    }}
+                                >
                                     {searchTerm ? 'Intenta con otros términos de búsqueda' : 'Comienza agregando tu primera transacción'}
                                 </Typography>
                                 {isAdmin() && !searchTerm && (
@@ -756,7 +858,12 @@ const TransactionList = () => {
                                         variant="contained"
                                         startIcon={<Add />}
                                         onClick={() => handleOpenForm()}
-                                        sx={{ borderRadius: 2, textTransform: 'none', fontWeight: 600 }}
+                                        sx={{
+                                            borderRadius: 2,
+                                            textTransform: 'none',
+                                            fontWeight: 600,
+                                            fontSize: { xs: '0.875rem', sm: '0.9375rem' }
+                                        }}
                                     >
                                         Nueva Transacción
                                     </Button>
@@ -768,13 +875,17 @@ const TransactionList = () => {
 
                 {/* Pagination mejorado */}
                 {pagination.totalPages > 1 && (
-                    <Box sx={{ display: 'flex', justifyContent: 'center', mt: 5 }}>
+                    <Box sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        mt: { xs: 3, sm: 4, md: 5 }
+                    }}>
                         <Pagination
                             count={pagination.totalPages}
                             page={pagination.page}
                             onChange={(e, value) => setPagination(prev => ({ ...prev, page: value }))}
                             color="primary"
-                            size={isMobile ? 'medium' : 'large'}
+                            size={isSmallMobile ? 'small' : isMobile ? 'medium' : 'large'}
                             sx={{
                                 '& .MuiPaginationItem-root': {
                                     borderRadius: 2,
@@ -793,14 +904,14 @@ const TransactionList = () => {
                         onClick={() => handleOpenForm()}
                         sx={{
                             position: 'fixed',
-                            bottom: 24,
-                            right: 24,
+                            bottom: { xs: 16, sm: 24 },
+                            right: { xs: 16, sm: 24 },
                             boxShadow: theme.shadows[12],
-                            width: 64,
-                            height: 64
+                            width: { xs: 56, sm: 64 },
+                            height: { xs: 56, sm: 64 }
                         }}
                     >
-                        <Add sx={{ fontSize: 32 }} />
+                        <Add sx={{ fontSize: { xs: 28, sm: 32 } }} />
                     </Fab>
                 )}
 
@@ -817,8 +928,8 @@ const TransactionList = () => {
                         }
                     }}
                 >
-                    <Box sx={{ p: 3 }}>
-                        <Stack direction="row" justifyContent="space-between" alignItems="center" mb={4}>
+                    <Box sx={{ p: { xs: 2, sm: 3 }, height: '100%', display: 'flex', flexDirection: 'column' }}>
+                        <Stack direction="row" justifyContent="space-between" alignItems="center" mb={3}>
                             <Typography variant="h5" fontWeight={700}>
                                 Filtros
                             </Typography>
@@ -834,217 +945,219 @@ const TransactionList = () => {
                             </IconButton>
                         </Stack>
 
-                        <Stack spacing={3}>
-                            {/* Períodos rápidos */}
-                            <Box>
-                                <Typography variant="caption" fontWeight={600} color="text.secondary" sx={{ mb: 2, display: 'block' }}>
-                                    PERÍODOS RÁPIDOS
+                        <Box sx={{ flexGrow: 1, overflow: 'auto' }}>
+                            <Stack spacing={3}>
+                                {/* Períodos rápidos */}
+                                <Box>
+                                    <Typography variant="caption" fontWeight={600} color="text.secondary" sx={{ mb: 2, display: 'block' }}>
+                                        PERÍODOS RÁPIDOS
+                                    </Typography>
+
+                                    <Stack spacing={1.5}>
+                                        <Button
+                                            fullWidth
+                                            variant={selectedPreset === FILTER_PRESETS.ALL ? 'contained' : 'outlined'}
+                                            onClick={() => handlePresetChange(FILTER_PRESETS.ALL)}
+                                            startIcon={<CalendarToday />}
+                                            sx={{
+                                                justifyContent: 'flex-start',
+                                                py: 1.5,
+                                                borderRadius: 2,
+                                                textTransform: 'none',
+                                                fontWeight: 600
+                                            }}
+                                        >
+                                            Todas las transacciones
+                                        </Button>
+
+                                        <Button
+                                            fullWidth
+                                            variant={selectedPreset === FILTER_PRESETS.THIS_MONTH ? 'contained' : 'outlined'}
+                                            onClick={() => handlePresetChange(FILTER_PRESETS.THIS_MONTH)}
+                                            startIcon={<CalendarToday />}
+                                            sx={{
+                                                justifyContent: 'flex-start',
+                                                py: 1.5,
+                                                borderRadius: 2,
+                                                textTransform: 'none',
+                                                fontWeight: 600
+                                            }}
+                                        >
+                                            Este mes
+                                        </Button>
+
+                                        <Button
+                                            fullWidth
+                                            variant={selectedPreset === FILTER_PRESETS.THIS_WEEK ? 'contained' : 'outlined'}
+                                            onClick={() => handlePresetChange(FILTER_PRESETS.THIS_WEEK)}
+                                            startIcon={<Today />}
+                                            sx={{
+                                                justifyContent: 'flex-start',
+                                                py: 1.5,
+                                                borderRadius: 2,
+                                                textTransform: 'none',
+                                                fontWeight: 600
+                                            }}
+                                        >
+                                            Esta semana
+                                        </Button>
+
+                                        <Button
+                                            fullWidth
+                                            variant={selectedPreset === FILTER_PRESETS.LAST_7_DAYS ? 'contained' : 'outlined'}
+                                            onClick={() => handlePresetChange(FILTER_PRESETS.LAST_7_DAYS)}
+                                            startIcon={<DateRange />}
+                                            sx={{
+                                                justifyContent: 'flex-start',
+                                                py: 1.5,
+                                                borderRadius: 2,
+                                                textTransform: 'none',
+                                                fontWeight: 600
+                                            }}
+                                        >
+                                            Últimos 7 días
+                                        </Button>
+
+                                        <Button
+                                            fullWidth
+                                            variant={selectedPreset === FILTER_PRESETS.LAST_30_DAYS ? 'contained' : 'outlined'}
+                                            onClick={() => handlePresetChange(FILTER_PRESETS.LAST_30_DAYS)}
+                                            startIcon={<DateRange />}
+                                            sx={{
+                                                justifyContent: 'flex-start',
+                                                py: 1.5,
+                                                borderRadius: 2,
+                                                textTransform: 'none',
+                                                fontWeight: 600
+                                            }}
+                                        >
+                                            Últimos 30 días
+                                        </Button>
+                                    </Stack>
+                                </Box>
+
+                                <Divider />
+
+                                {/* Rango personalizado */}
+                                <Box>
+                                    <Button
+                                        fullWidth
+                                        variant={selectedPreset === FILTER_PRESETS.CUSTOM ? 'contained' : 'outlined'}
+                                        onClick={() => {
+                                            setSelectedPreset(FILTER_PRESETS.CUSTOM);
+                                            setShowCustomRange(!showCustomRange);
+                                        }}
+                                        endIcon={showCustomRange ? <ExpandLess /> : <ExpandMore />}
+                                        sx={{
+                                            justifyContent: 'space-between',
+                                            py: 1.5,
+                                            borderRadius: 2,
+                                            textTransform: 'none',
+                                            fontWeight: 600
+                                        }}
+                                    >
+                                        Rango personalizado
+                                    </Button>
+
+                                    <Collapse in={showCustomRange}>
+                                        <Stack spacing={2} sx={{ mt: 2 }}>
+                                            <Paper
+                                                elevation={0}
+                                                sx={{
+                                                    p: 2,
+                                                    border: `1px solid ${theme.palette.divider}`,
+                                                    borderRadius: 2
+                                                }}
+                                            >
+                                                <TextField
+                                                    type="date"
+                                                    fullWidth
+                                                    label="Fecha Inicio"
+                                                    value={tempFilters.fechaInicio}
+                                                    onChange={(e) => handleFilterChange('fechaInicio', e.target.value)}
+                                                    InputLabelProps={{ shrink: true }}
+                                                    sx={{
+                                                        '& .MuiOutlinedInput-root': {
+                                                            borderRadius: 2
+                                                        }
+                                                    }}
+                                                />
+                                            </Paper>
+
+                                            <Paper
+                                                elevation={0}
+                                                sx={{
+                                                    p: 2,
+                                                    border: `1px solid ${theme.palette.divider}`,
+                                                    borderRadius: 2
+                                                }}
+                                            >
+                                                <TextField
+                                                    type="date"
+                                                    fullWidth
+                                                    label="Fecha Fin"
+                                                    value={tempFilters.fechaFin}
+                                                    onChange={(e) => handleFilterChange('fechaFin', e.target.value)}
+                                                    InputLabelProps={{ shrink: true }}
+                                                    sx={{
+                                                        '& .MuiOutlinedInput-root': {
+                                                            borderRadius: 2
+                                                        }
+                                                    }}
+                                                />
+                                            </Paper>
+                                        </Stack>
+                                    </Collapse>
+                                </Box>
+
+                                <Divider />
+
+                                {/* Filtros adicionales */}
+                                <Typography variant="subtitle2" fontWeight={600} color="text.secondary">
+                                    FILTROS ADICIONALES
                                 </Typography>
 
-                                <Stack spacing={1.5}>
-                                    <Button
-                                        fullWidth
-                                        variant={selectedPreset === FILTER_PRESETS.ALL ? 'contained' : 'outlined'}
-                                        onClick={() => handlePresetChange(FILTER_PRESETS.ALL)}
-                                        startIcon={<CalendarToday />}
-                                        sx={{
-                                            justifyContent: 'flex-start',
-                                            py: 1.5,
-                                            borderRadius: 2,
-                                            textTransform: 'none',
-                                            fontWeight: 600
-                                        }}
-                                    >
-                                        Todas las transacciones
-                                    </Button>
-
-                                    <Button
-                                        fullWidth
-                                        variant={selectedPreset === FILTER_PRESETS.THIS_MONTH ? 'contained' : 'outlined'}
-                                        onClick={() => handlePresetChange(FILTER_PRESETS.THIS_MONTH)}
-                                        startIcon={<CalendarToday />}
-                                        sx={{
-                                            justifyContent: 'flex-start',
-                                            py: 1.5,
-                                            borderRadius: 2,
-                                            textTransform: 'none',
-                                            fontWeight: 600
-                                        }}
-                                    >
-                                        Este mes
-                                    </Button>
-
-                                    <Button
-                                        fullWidth
-                                        variant={selectedPreset === FILTER_PRESETS.THIS_WEEK ? 'contained' : 'outlined'}
-                                        onClick={() => handlePresetChange(FILTER_PRESETS.THIS_WEEK)}
-                                        startIcon={<Today />}
-                                        sx={{
-                                            justifyContent: 'flex-start',
-                                            py: 1.5,
-                                            borderRadius: 2,
-                                            textTransform: 'none',
-                                            fontWeight: 600
-                                        }}
-                                    >
-                                        Esta semana
-                                    </Button>
-
-                                    <Button
-                                        fullWidth
-                                        variant={selectedPreset === FILTER_PRESETS.LAST_7_DAYS ? 'contained' : 'outlined'}
-                                        onClick={() => handlePresetChange(FILTER_PRESETS.LAST_7_DAYS)}
-                                        startIcon={<DateRange />}
-                                        sx={{
-                                            justifyContent: 'flex-start',
-                                            py: 1.5,
-                                            borderRadius: 2,
-                                            textTransform: 'none',
-                                            fontWeight: 600
-                                        }}
-                                    >
-                                        Últimos 7 días
-                                    </Button>
-
-                                    <Button
-                                        fullWidth
-                                        variant={selectedPreset === FILTER_PRESETS.LAST_30_DAYS ? 'contained' : 'outlined'}
-                                        onClick={() => handlePresetChange(FILTER_PRESETS.LAST_30_DAYS)}
-                                        startIcon={<DateRange />}
-                                        sx={{
-                                            justifyContent: 'flex-start',
-                                            py: 1.5,
-                                            borderRadius: 2,
-                                            textTransform: 'none',
-                                            fontWeight: 600
-                                        }}
-                                    >
-                                        Últimos 30 días
-                                    </Button>
-                                </Stack>
-                            </Box>
-
-                            <Divider />
-
-                            {/* Rango personalizado */}
-                            <Box>
-                                <Button
+                                <TextField
+                                    select
                                     fullWidth
-                                    variant={selectedPreset === FILTER_PRESETS.CUSTOM ? 'contained' : 'outlined'}
-                                    onClick={() => {
-                                        setSelectedPreset(FILTER_PRESETS.CUSTOM);
-                                        setShowCustomRange(!showCustomRange);
-                                    }}
-                                    endIcon={showCustomRange ? <ExpandLess /> : <ExpandMore />}
+                                    label="Tipo de transacción"
+                                    value={tempFilters.tipo}
+                                    onChange={(e) => handleFilterChange('tipo', e.target.value)}
                                     sx={{
-                                        justifyContent: 'space-between',
-                                        py: 1.5,
-                                        borderRadius: 2,
-                                        textTransform: 'none',
-                                        fontWeight: 600
+                                        '& .MuiOutlinedInput-root': {
+                                            borderRadius: 2
+                                        }
                                     }}
                                 >
-                                    Rango personalizado
-                                </Button>
+                                    <MenuItem value="">Todos</MenuItem>
+                                    <MenuItem value="ingreso">Ingreso</MenuItem>
+                                    <MenuItem value="gasto">Gasto</MenuItem>
+                                </TextField>
 
-                                <Collapse in={showCustomRange}>
-                                    <Stack spacing={2} sx={{ mt: 2 }}>
-                                        <Paper
-                                            elevation={0}
-                                            sx={{
-                                                p: 2,
-                                                border: `1px solid ${theme.palette.divider}`,
-                                                borderRadius: 2
-                                            }}
-                                        >
-                                            <TextField
-                                                type="date"
-                                                fullWidth
-                                                label="Fecha Inicio"
-                                                value={tempFilters.fechaInicio}
-                                                onChange={(e) => handleFilterChange('fechaInicio', e.target.value)}
-                                                InputLabelProps={{ shrink: true }}
-                                                sx={{
-                                                    '& .MuiOutlinedInput-root': {
-                                                        borderRadius: 2
-                                                    }
-                                                }}
-                                            />
-                                        </Paper>
+                                <TextField
+                                    select
+                                    fullWidth
+                                    label="Categoría"
+                                    value={tempFilters.tipoGasto}
+                                    onChange={(e) => handleFilterChange('tipoGasto', e.target.value)}
+                                    disabled={tempFilters.tipo === 'ingreso'}
+                                    sx={{
+                                        '& .MuiOutlinedInput-root': {
+                                            borderRadius: 2
+                                        }
+                                    }}
+                                >
+                                    <MenuItem value="">Todas</MenuItem>
+                                    {TIPO_GASTO.map((option) => (
+                                        <MenuItem key={option.value} value={option.value}>
+                                            {option.label}
+                                        </MenuItem>
+                                    ))}
+                                </TextField>
+                            </Stack>
+                        </Box>
 
-                                        <Paper
-                                            elevation={0}
-                                            sx={{
-                                                p: 2,
-                                                border: `1px solid ${theme.palette.divider}`,
-                                                borderRadius: 2
-                                            }}
-                                        >
-                                            <TextField
-                                                type="date"
-                                                fullWidth
-                                                label="Fecha Fin"
-                                                value={tempFilters.fechaFin}
-                                                onChange={(e) => handleFilterChange('fechaFin', e.target.value)}
-                                                InputLabelProps={{ shrink: true }}
-                                                sx={{
-                                                    '& .MuiOutlinedInput-root': {
-                                                        borderRadius: 2
-                                                    }
-                                                }}
-                                            />
-                                        </Paper>
-                                    </Stack>
-                                </Collapse>
-                            </Box>
-
-                            <Divider />
-
-                            {/* Filtros adicionales */}
-                            <Typography variant="subtitle2" fontWeight={600} color="text.secondary">
-                                FILTROS ADICIONALES
-                            </Typography>
-
-                            <TextField
-                                select
-                                fullWidth
-                                label="Tipo de transacción"
-                                value={tempFilters.tipo}
-                                onChange={(e) => handleFilterChange('tipo', e.target.value)}
-                                sx={{
-                                    '& .MuiOutlinedInput-root': {
-                                        borderRadius: 2
-                                    }
-                                }}
-                            >
-                                <MenuItem value="">Todos</MenuItem>
-                                <MenuItem value="ingreso">Ingreso</MenuItem>
-                                <MenuItem value="gasto">Gasto</MenuItem>
-                            </TextField>
-
-                            <TextField
-                                select
-                                fullWidth
-                                label="Categoría"
-                                value={tempFilters.tipoGasto}
-                                onChange={(e) => handleFilterChange('tipoGasto', e.target.value)}
-                                disabled={tempFilters.tipo === 'ingreso'}
-                                sx={{
-                                    '& .MuiOutlinedInput-root': {
-                                        borderRadius: 2
-                                    }
-                                }}
-                            >
-                                <MenuItem value="">Todas</MenuItem>
-                                {TIPO_GASTO.map((option) => (
-                                    <MenuItem key={option.value} value={option.value}>
-                                        {option.label}
-                                    </MenuItem>
-                                ))}
-                            </TextField>
-                        </Stack>
-
-                        <Stack spacing={2} sx={{ mt: 4 }}>
+                        <Stack spacing={2} sx={{ mt: 3, pt: 2, borderTop: `1px solid ${theme.palette.divider}` }}>
                             <Button
                                 variant="outlined"
                                 fullWidth

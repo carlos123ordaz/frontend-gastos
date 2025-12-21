@@ -188,9 +188,7 @@ const Settings = () => {
                                         <Typography variant="h5" fontWeight={700} gutterBottom>
                                             Configuración Financiera
                                         </Typography>
-                                        <Typography variant="body2" color="text.secondary">
-                                            Actualiza los parámetros principales del sistema
-                                        </Typography>
+
                                     </Box>
 
                                     <Divider />
@@ -240,37 +238,7 @@ const Settings = () => {
                                         </Stack>
                                     </Paper>
 
-                                    {/* Descripción */}
-                                    <Paper
-                                        elevation={0}
-                                        sx={{
-                                            p: 2,
-                                            border: `1px solid ${theme.palette.divider}`,
-                                            borderRadius: 2
-                                        }}
-                                    >
-                                        <Stack spacing={1}>
-                                            <Stack direction="row" spacing={1} alignItems="center">
-                                                <Description sx={{ fontSize: 20, color: 'text.secondary' }} />
-                                                <Typography variant="caption" fontWeight={600} color="text.secondary">
-                                                    DESCRIPCIÓN (OPCIONAL)
-                                                </Typography>
-                                            </Stack>
-                                            <TextField
-                                                fullWidth
-                                                multiline
-                                                rows={4}
-                                                placeholder="Agrega una descripción o notas sobre la configuración..."
-                                                {...register('descripcion')}
-                                                helperText="Información adicional sobre la configuración del sistema"
-                                                sx={{
-                                                    '& .MuiOutlinedInput-root': {
-                                                        borderRadius: 2
-                                                    }
-                                                }}
-                                            />
-                                        </Stack>
-                                    </Paper>
+
 
                                     <Divider />
 

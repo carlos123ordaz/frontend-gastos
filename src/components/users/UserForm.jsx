@@ -218,9 +218,7 @@ const UserForm = ({ open, onClose, onSubmit, user, isSubmitting }) => {
                                                         <Typography variant="body2" fontWeight={600}>
                                                             Usuario
                                                         </Typography>
-                                                        <Typography variant="caption" color="text.secondary">
-                                                            Acceso estándar a la aplicación
-                                                        </Typography>
+
                                                     </Box>
                                                 </Stack>
                                             </MenuItem>
@@ -231,9 +229,7 @@ const UserForm = ({ open, onClose, onSubmit, user, isSubmitting }) => {
                                                         <Typography variant="body2" fontWeight={600}>
                                                             Administrador
                                                         </Typography>
-                                                        <Typography variant="caption" color="text.secondary">
-                                                            Acceso completo y gestión de usuarios
-                                                        </Typography>
+
                                                     </Box>
                                                 </Stack>
                                             </MenuItem>
