@@ -77,11 +77,6 @@ const StatsCards = ({ data }) => {
                 borderRadius: { xs: 2, sm: 2.5, md: 3 },
                 transition: 'all 0.3s',
                 height: '100%',
-                '&:hover': {
-                  boxShadow: theme.shadows[4],
-                  transform: 'translateY(-4px)',
-                  borderColor: stat.color
-                }
               }}
             >
               <CardContent
