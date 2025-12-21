@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react';
 import axios from 'axios';
+import { CONFIG } from '../config';
 
 export const AuthContext = createContext();
 
@@ -21,7 +22,7 @@ export const AuthProvider = ({ children }) => {
 
     const fetchUser = async () => {
         try {
-            const response = await axios.get(`http://localhost:5000/api/auth/me`);
+            const response = await axios.get(`${CONFIG.api_url}/auth/me`);
             setUser(response.data.user);
         } catch (error) {
             console.error('Error al obtener usuario:', error);
