@@ -78,7 +78,6 @@ const Dashboard = () => {
             if (appliedFilters.fechaFin) params.fechaFin = appliedFilters.fechaFin;
 
             const response = await dashboardApi.getResumen(params);
-            console.log(response.data);
             setData(response.data);
         } catch (err) {
             setError(err.response?.data?.message || 'Error al cargar datos del dashboard');
