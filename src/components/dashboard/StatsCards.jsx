@@ -17,12 +17,11 @@ import {
   Savings
 } from '@mui/icons-material';
 import { formatCurrency } from '../../utils/formatters';
+import { useNavigate } from 'react-router-dom';
 
 const StatsCards = ({ data }) => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const isTablet = useMediaQuery(theme.breakpoints.down('md'));
-
+  const navigate = useNavigate();
   const statsData = [
     {
       title: 'Balance Total',
@@ -62,8 +61,15 @@ const StatsCards = ({ data }) => {
       {statsData.map((stat, index) => {
         const Icon = stat.icon;
         return (
-          <Grid size={{ xs: 6, sm: 6, md: 6, lg: 3 }} key={index}>
+          <Grid
+            onClick={() => {
+              if (stat.title === 'Total Gastos') {
+                navigate('/transactions')
+              }
+            }}
+            size={{ xs: 6, sm: 6, md: 6, lg: 3 }} key={index}>
             <Card
+
               elevation={0}
               sx={{
                 bgcolor: 'background.paper',

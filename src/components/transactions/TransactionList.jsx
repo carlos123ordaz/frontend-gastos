@@ -721,7 +721,8 @@ const TransactionList = () => {
                                                         fontSize: { xs: '0.95rem', sm: '1.05rem' },
                                                         overflow: 'hidden',
                                                         textOverflow: 'ellipsis',
-                                                        whiteSpace: 'nowrap'
+                                                        whiteSpace: 'nowrap',
+                                                        width: '180px'
                                                     }}
                                                 >
                                                     {transaction.descripcion}

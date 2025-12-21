@@ -35,6 +35,7 @@ import Loading from '../common/Loading';
 import MonthlyBarChart from './MonthlyBarChart';
 import CategoryPieChart from './CategoryPieChart';
 import StatsCards from './StatsCards';
+import { useNavigate } from 'react-router-dom';
 
 const FILTER_PRESETS = {
     THIS_MONTH: 'this_month',
