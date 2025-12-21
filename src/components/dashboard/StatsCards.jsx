@@ -48,7 +48,6 @@ const StatsCards = ({ data }) => {
     {
       title: 'Ahorro del Mes',
       value: (data?.totalIngresos || 0) - (data?.totalGastos || 0),
-      subtitle: `${((((data?.totalIngresos || 0) - (data?.totalGastos || 0)) / (data?.totalIngresos || 1)) * 100).toFixed(1)}% de ingresos`,
       icon: Savings,
       color: theme.palette.primary.main,
       bgColor: alpha(theme.palette.primary.main, 0.1)
