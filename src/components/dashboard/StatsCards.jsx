@@ -60,7 +60,7 @@ const StatsCards = ({ data }) => {
       {statsData.map((stat, index) => {
         const Icon = stat.icon;
         return (
-          <Grid size={{ xs: 12, sm: 6, lg: 3 }} key={index}>
+          <Grid size={{ xs: 6, sm: 6, lg: 3 }} key={index}>
             <Card
               elevation={0}
               sx={{
@@ -80,7 +80,7 @@ const StatsCards = ({ data }) => {
                       {stat.title}
                     </Typography>
                     <Typography
-                      variant="h4"
+                      variant="h5"
                       fontWeight={700}
                       color={stat.color}
                       sx={{ mb: 0.5 }}

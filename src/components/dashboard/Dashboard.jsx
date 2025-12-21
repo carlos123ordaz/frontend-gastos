@@ -206,7 +206,8 @@ const Dashboard = () => {
                                 borderRadius: 2,
                                 textTransform: 'none',
                                 fontWeight: 600,
-                                minWidth: 160
+                                minWidth: 160,
+                                mt: 2
                             }}
                         >
                             {getFilterLabel()}
