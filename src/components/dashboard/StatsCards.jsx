@@ -7,7 +7,8 @@ import {
   Box,
   Stack,
   alpha,
-  useTheme
+  useTheme,
+  useMediaQuery
 } from '@mui/material';
 import {
   TrendingUp,
@@ -19,6 +20,8 @@ import { formatCurrency } from '../../utils/formatters';
 
 const StatsCards = ({ data }) => {
   const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isTablet = useMediaQuery(theme.breakpoints.down('md'));
 
   const statsData = [
     {
@@ -27,7 +30,7 @@ const StatsCards = ({ data }) => {
       subtitle: `Monto inicial: ${formatCurrency(data?.montoInicial || 0)}`,
       icon: Wallet,
       color: data?.balance >= 0 ? theme.palette.success.main : theme.palette.error.main,
-      bgColor: alpha(theme.palette.info.main, 0.1)
+      bgColor: alpha(data?.balance >= 0 ? theme.palette.success.main : theme.palette.error.main, 0.1)
     },
     {
       title: 'Total Ingresos',
@@ -55,44 +58,97 @@ const StatsCards = ({ data }) => {
   ];
 
   return (
-    <Grid container spacing={3}>
+    <Grid container spacing={{ xs: 2, sm: 2.5, md: 3 }}>
       {statsData.map((stat, index) => {
         const Icon = stat.icon;
         return (
-          <Grid size={{ xs: 6, sm: 6, lg: 3 }} key={index}>
+          <Grid size={{ xs: 6, sm: 6, md: 6, lg: 3 }} key={index}>
             <Card
               elevation={0}
               sx={{
                 bgcolor: 'background.paper',
                 border: `1px solid ${theme.palette.divider}`,
+                borderRadius: { xs: 2, sm: 2.5, md: 3 },
                 transition: 'all 0.3s',
+                height: '100%',
                 '&:hover': {
                   boxShadow: theme.shadows[4],
-                  transform: 'translateY(-4px)'
+                  transform: 'translateY(-4px)',
+                  borderColor: stat.color
                 }
               }}
             >
-              <CardContent>
-                <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
-                  <Box>
-                    <Typography variant="body2" color="text.secondary" gutterBottom>
+              <CardContent
+                sx={{
+                  p: { xs: 1.5, sm: 2, md: 2.5 },
+                  '&:last-child': {
+                    pb: { xs: 1.5, sm: 2, md: 2.5 }
+                  }
+                }}
+              >
+                <Stack
+                  direction="row"
+                  justifyContent="space-between"
+                  alignItems="flex-start"
+                  spacing={{ xs: 1, sm: 1.5 }}
+                >
+                  <Box sx={{ flexGrow: 1, minWidth: 0 }}>
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      gutterBottom
+                      sx={{
+                        fontSize: { xs: '0.7rem', sm: '0.8rem', md: '0.875rem' },
+                        fontWeight: 500,
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis'
+                      }}
+                    >
                       {stat.title}
                     </Typography>
                     <Typography
-                      variant="h5"
+                      variant="h6"
                       fontWeight={700}
                       color={stat.color}
-                      sx={{ mb: 0.5 }}
+                      sx={{
+                        mb: 0.5,
+                        fontSize: { xs: '1rem', sm: '1.15rem', md: '1.25rem' },
+                        fontVariantNumeric: 'tabular-nums',
+                        wordBreak: 'break-all'
+                      }}
                     >
                       {formatCurrency(stat.value)}
                     </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      {stat.subtitle}
-                    </Typography>
+                    {stat.subtitle && (
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        sx={{
+                          fontSize: { xs: '0.65rem', sm: '0.7rem', md: '0.75rem' },
+                          display: { xs: 'none', sm: 'block' }
+                        }}
+                      >
+                        {stat.subtitle}
+                      </Typography>
+                    )}
                     {(stat.isIncome || stat.isExpense) && (
-                      <Stack direction="row" alignItems="center" spacing={0.5} mt={1}>
-                        <Icon sx={{ fontSize: 16, color: stat.color }} />
-                        <Typography variant="caption" color={stat.color}>
+                      <Stack
+                        direction="row"
+                        alignItems="center"
+                        spacing={0.5}
+                        mt={{ xs: 0.5, sm: 1 }}
+                        sx={{ display: { xs: 'none', sm: 'flex' } }}
+                      >
+                        <Icon sx={{ fontSize: { xs: 14, sm: 16 }, color: stat.color }} />
+                        <Typography
+                          variant="caption"
+                          color={stat.color}
+                          sx={{
+                            fontSize: { xs: '0.65rem', sm: '0.7rem', md: '0.75rem' },
+                            fontWeight: 600
+                          }}
+                        >
                           {stat.isIncome ? 'Ingresos' : 'Gastos'}
                         </Typography>
                       </Stack>
@@ -100,16 +156,20 @@ const StatsCards = ({ data }) => {
                   </Box>
                   <Box
                     sx={{
-                      width: 48,
-                      height: 48,
-                      borderRadius: 2,
+                      width: { xs: 36, sm: 44, md: 48 },
+                      height: { xs: 36, sm: 44, md: 48 },
+                      borderRadius: { xs: 1.5, sm: 2 },
                       bgcolor: stat.bgColor,
                       display: 'flex',
                       alignItems: 'center',
-                      justifyContent: 'center'
+                      justifyContent: 'center',
+                      flexShrink: 0
                     }}
                   >
-                    <Icon sx={{ color: stat.color, fontSize: 24 }} />
+                    <Icon sx={{
+                      color: stat.color,
+                      fontSize: { xs: 20, sm: 22, md: 24 }
+                    }} />
                   </Box>
                 </Stack>
               </CardContent>
