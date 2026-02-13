@@ -22,6 +22,9 @@ import { useNavigate } from 'react-router-dom';
 const StatsCards = ({ data }) => {
   const theme = useTheme();
   const navigate = useNavigate();
+
+  // StatsCards.js — reemplazar statsData
+
   const statsData = [
     {
       title: 'Balance Total',
@@ -34,6 +37,9 @@ const StatsCards = ({ data }) => {
     {
       title: 'Total Ingresos',
       value: data?.totalIngresos || 0,
+      subtitle: data?.totalIngresosPeriodo !== undefined
+        ? `Período: ${formatCurrency(data.totalIngresosPeriodo)}`
+        : undefined,
       icon: TrendingUp,
       color: theme.palette.success.main,
       bgColor: alpha(theme.palette.success.main, 0.1),
@@ -42,14 +48,20 @@ const StatsCards = ({ data }) => {
     {
       title: 'Total Gastos',
       value: data?.totalGastos || 0,
+      subtitle: data?.totalGastosPeriodo !== undefined
+        ? `Período: ${formatCurrency(data.totalGastosPeriodo)}`
+        : undefined,
       icon: TrendingDown,
       color: theme.palette.error.main,
       bgColor: alpha(theme.palette.error.main, 0.1),
       isExpense: true
     },
     {
-      title: 'Ahorro del Mes',
+      title: 'Ahorro Total',
       value: (data?.totalIngresos || 0) - (data?.totalGastos || 0),
+      subtitle: data?.totalIngresosPeriodo !== undefined
+        ? `Período: ${formatCurrency((data.totalIngresosPeriodo || 0) - (data.totalGastosPeriodo || 0))}`
+        : undefined,
       icon: Savings,
       color: theme.palette.primary.main,
       bgColor: alpha(theme.palette.primary.main, 0.1)
