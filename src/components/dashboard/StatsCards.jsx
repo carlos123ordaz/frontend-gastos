@@ -23,8 +23,6 @@ const StatsCards = ({ data }) => {
   const theme = useTheme();
   const navigate = useNavigate();
 
-  // StatsCards.js — reemplazar statsData
-
   const statsData = [
     {
       title: 'Balance Total',
@@ -68,20 +66,28 @@ const StatsCards = ({ data }) => {
     }
   ];
 
+  const handleCardClick = (stat) => {
+    if (stat.isIncome) {
+      navigate('/transactions?tipo=ingreso');
+    } else if (stat.isExpense) {
+      navigate('/transactions?tipo=gasto');
+    }
+  };
+
   return (
     <Grid container spacing={{ xs: 2, sm: 2.5, md: 3 }}>
       {statsData.map((stat, index) => {
         const Icon = stat.icon;
+        const isClickable = stat.isIncome || stat.isExpense;
+
         return (
           <Grid
-            onClick={() => {
-              if (stat.title === 'Total Gastos') {
-                navigate('/transactions')
-              }
-            }}
-            size={{ xs: 6, sm: 6, md: 6, lg: 3 }} key={index}>
+            onClick={() => handleCardClick(stat)}
+            size={{ xs: 6, sm: 6, md: 6, lg: 3 }}
+            key={index}
+            sx={{ cursor: isClickable ? 'pointer' : 'default' }}
+          >
             <Card
-
               elevation={0}
               sx={{
                 bgcolor: 'background.paper',
@@ -89,6 +95,13 @@ const StatsCards = ({ data }) => {
                 borderRadius: { xs: 2, sm: 2.5, md: 3 },
                 transition: 'all 0.3s',
                 height: '100%',
+                ...(isClickable && {
+                  '&:hover': {
+                    borderColor: stat.color,
+                    boxShadow: `0 4px 12px ${alpha(stat.color, 0.15)}`,
+                    transform: 'translateY(-2px)'
+                  }
+                })
               }}
             >
               <CardContent

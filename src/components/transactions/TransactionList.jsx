@@ -44,6 +44,7 @@ import {
     ExpandMore,
     ExpandLess
 } from '@mui/icons-material';
+import { useSearchParams } from 'react-router-dom';
 import { transactionApi } from '../../api/transactionApi';
 import { useAuth } from '../../hooks/useAuth';
 import { useSnackbar } from 'notistack';
@@ -81,33 +82,39 @@ const TransactionList = () => {
     const isSmallMobile = useMediaQuery(theme.breakpoints.down('sm'));
     const { isAdmin } = useAuth();
     const { enqueueSnackbar } = useSnackbar();
+    const [searchParams] = useSearchParams();
+
+    // Leer query params al inicializar
+    const tipoParam = searchParams.get('tipo');
+    const hasTypeFilter = tipoParam === 'ingreso' || tipoParam === 'gasto';
 
     const [transactions, setTransactions] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [currentView, setCurrentView] = useState('list'); // 'list', 'detail', 'form'
+    const [currentView, setCurrentView] = useState('list');
     const [selectedTransaction, setSelectedTransaction] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [confirmDialog, setConfirmDialog] = useState({ open: false, transaction: null });
     const [filterDrawer, setFilterDrawer] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
-    const [selectedPreset, setSelectedPreset] = useState(FILTER_PRESETS.THIS_MONTH);
+    const [selectedPreset, setSelectedPreset] = useState(
+        hasTypeFilter ? FILTER_PRESETS.ALL : FILTER_PRESETS.THIS_MONTH
+    );
     const [showCustomRange, setShowCustomRange] = useState(false);
     const [totalCount, setTotalCount] = useState(0);
 
-    // Filtros aplicados (los que se envían al backend)
+    // Filtros aplicados - inicializados según query params
     const [appliedFilters, setAppliedFilters] = useState({
-        tipo: '',
+        tipo: hasTypeFilter ? tipoParam : '',
         tipoGasto: '',
-        fechaInicio: format(startOfMonth(new Date()), 'yyyy-MM-dd'),
-        fechaFin: format(endOfMonth(new Date()), 'yyyy-MM-dd')
+        fechaInicio: hasTypeFilter ? '' : format(startOfMonth(new Date()), 'yyyy-MM-dd'),
+        fechaFin: hasTypeFilter ? '' : format(endOfMonth(new Date()), 'yyyy-MM-dd')
     });
 
-    // Filtros temporales (para rango personalizado)
     const [tempFilters, setTempFilters] = useState({
-        tipo: '',
+        tipo: hasTypeFilter ? tipoParam : '',
         tipoGasto: '',
-        fechaInicio: format(startOfMonth(new Date()), 'yyyy-MM-dd'),
-        fechaFin: format(endOfMonth(new Date()), 'yyyy-MM-dd')
+        fechaInicio: hasTypeFilter ? '' : format(startOfMonth(new Date()), 'yyyy-MM-dd'),
+        fechaFin: hasTypeFilter ? '' : format(endOfMonth(new Date()), 'yyyy-MM-dd')
     });
 
     const [pagination, setPagination] = useState({
@@ -115,6 +122,13 @@ const TransactionList = () => {
         totalPages: 1,
         limit: 20
     });
+
+    // Limpiar URL sin causar re-render de React Router
+    useEffect(() => {
+        if (hasTypeFilter) {
+            window.history.replaceState({}, '', '/transactions');
+        }
+    }, []);
 
     useEffect(() => {
         if (currentView === 'list') {
@@ -595,12 +609,13 @@ const TransactionList = () => {
                             </Typography>
                             {appliedFilters.tipo && (
                                 <Chip
-                                    label={`Tipo: ${appliedFilters.tipo}`}
+                                    label={`Tipo: ${appliedFilters.tipo === 'ingreso' ? 'Ingreso' : 'Gasto'}`}
                                     onDelete={() => {
                                         setAppliedFilters(prev => ({ ...prev, tipo: '' }));
                                         setTempFilters(prev => ({ ...prev, tipo: '' }));
                                     }}
                                     size="small"
+                                    color="primary"
                                     sx={{
                                         borderRadius: 1.5,
                                         fontSize: { xs: '0.7rem', sm: '0.75rem' }
